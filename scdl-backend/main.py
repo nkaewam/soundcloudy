@@ -4,8 +4,18 @@ from scdl.scdl import SoundCloud, SCDLArgs, download_url
 from fastapi.responses import StreamingResponse, JSONResponse
 import mimetypes
 import io
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+# Add CORS middleware to allow requests from http://localhost:3000
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 sound_cloud_client = SoundCloud(None, None)
 

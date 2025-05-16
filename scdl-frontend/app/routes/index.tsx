@@ -16,6 +16,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { downloadSoundCloudTrack } from "@/lib/backend";
+import { useMutation } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -50,15 +51,9 @@ function Home() {
   });
 
   // 3. Handle submit
-  async function onSubmit(values) {
-    try {
-      form.setValue("url", values.url); // ensure value is set
-      form.clearErrors();
-      form.formState.isSubmitting = true;
-      // Call backend to download
-      const response = await downloadSoundCloudTrack(
-        encodeURIComponent(values.url)
-      );
+  const mutation = useMutation({
+    mutationFn: async (url: string) => {
+      const response = await downloadSoundCloudTrack(encodeURIComponent(url));
       if (!response.ok) {
         throw new Error("Failed to download track");
       }
@@ -66,11 +61,14 @@ function Home() {
       const disposition = response.headers.get("Content-Disposition");
       let filename = "track.mp3";
       if (disposition) {
-        const match = disposition.match(/filename="(.+)"/);
+        const match = disposition.match(/filename=\"(.+)\"/);
         if (match) filename = match[1];
       }
       // Download the file
       const blob = await response.blob();
+      return { blob, filename };
+    },
+    onSuccess: ({ blob, filename }) => {
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -79,11 +77,15 @@ function Home() {
       a.click();
       a.remove();
       window.URL.revokeObjectURL(url);
-    } catch (err) {
+    },
+    onError: (err: any) => {
       form.setError("url", { message: err.message || "Download failed" });
-    } finally {
-      form.formState.isSubmitting = false;
-    }
+    },
+  });
+
+  async function onSubmit(values) {
+    form.clearErrors();
+    await mutation.mutateAsync(values.url);
   }
 
   return (
@@ -120,6 +122,7 @@ function Home() {
                       <Input
                         placeholder="https://soundcloud.com/..."
                         className="rounded-full w-full text-white text-3xl px-5 py-6 placeholder:text-white/60"
+                        disabled={mutation.isPending}
                         {...field}
                       />
                     </FormControl>
@@ -131,10 +134,10 @@ function Home() {
                 type="submit"
                 variant="outline"
                 className="bg-transparent h-[50px] aspect-square rounded-full disabled:bg-white/40"
-                disabled={form.formState.isSubmitting}
+                disabled={mutation.isPending}
               >
-                {form.formState.isSubmitting ? (
-                  <Loader2 className="animate-spin hidden" />
+                {mutation.isPending ? (
+                  <Loader2 className="animate-spin" />
                 ) : (
                   <Download />
                 )}
