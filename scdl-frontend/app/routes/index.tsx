@@ -15,6 +15,7 @@ import {
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { downloadSoundCloudTrack } from "@/lib/backend";
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -49,10 +50,40 @@ function Home() {
   });
 
   // 3. Handle submit
-  function onSubmit(values) {
-    // Do something with the valid SoundCloud URL
-    // e.g., trigger download
-    console.log(values);
+  async function onSubmit(values) {
+    try {
+      form.setValue("url", values.url); // ensure value is set
+      form.clearErrors();
+      form.formState.isSubmitting = true;
+      // Call backend to download
+      const response = await downloadSoundCloudTrack(
+        encodeURIComponent(values.url)
+      );
+      if (!response.ok) {
+        throw new Error("Failed to download track");
+      }
+      // Get filename from Content-Disposition header
+      const disposition = response.headers.get("Content-Disposition");
+      let filename = "track.mp3";
+      if (disposition) {
+        const match = disposition.match(/filename="(.+)"/);
+        if (match) filename = match[1];
+      }
+      // Download the file
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      form.setError("url", { message: err.message || "Download failed" });
+    } finally {
+      form.formState.isSubmitting = false;
+    }
   }
 
   return (
@@ -92,7 +123,7 @@ function Home() {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="pl-4" />
                   </FormItem>
                 )}
               />
@@ -102,8 +133,11 @@ function Home() {
                 className="bg-transparent h-[50px] aspect-square rounded-full disabled:bg-white/40"
                 disabled={form.formState.isSubmitting}
               >
-                {/* <Loader2 className="animate-spin hidden" /> */}
-                <Download />
+                {form.formState.isSubmitting ? (
+                  <Loader2 className="animate-spin hidden" />
+                ) : (
+                  <Download />
+                )}
               </Button>
             </form>
           </Form>
