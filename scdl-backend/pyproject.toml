@@ -6,5 +6,5 @@ readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
     "fastapi[standard]>=0.115.12",
-    "scdl @ file:${PROJECT_ROOT}/vendor/scdl",
+    "scdl @ file:${PROJECT_ROOT}/scdl",
 ]

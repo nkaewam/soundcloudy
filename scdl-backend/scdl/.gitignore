@@ -1,0 +1,13 @@
+build/
+dist/
+*.pyc
+*.egg-info/
+__pycache__/
+*.mp3
+.vscode
+.venv
+.env
+.coverage*
+.idea
+.python-version
+.DS_store

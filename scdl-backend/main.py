@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import FastAPI
-from vendor.scdl.scdl.scdl import SoundCloud, SCDLArgs, download_url
+from scdl.scdl import SoundCloud, SCDLArgs, download_url
 from fastapi.responses import StreamingResponse, JSONResponse
 import mimetypes
 import io
@@ -11,12 +11,12 @@ sound_cloud_client = SoundCloud(None, None)
 
 
 @app.get("/healthcheck")
-def health_check():
+async def health_check():
     return "OK"
 
 
 @app.get("/download/{url:path}")
-def download(url: str):
+async def download(url: str):
     args: SCDLArgs = SCDLArgs(
         l=url,
         auth_token=None,

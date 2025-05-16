@@ -643,7 +643,7 @@ wheels = [
 [[package]]
 name = "scdl"
 version = "2.12.4"
-source = { directory = "vendor/scdl" }
+source = { directory = "scdl" }
 dependencies = [
     { name = "docopt-ng" },
     { name = "filelock" },
@@ -690,7 +690,7 @@ dependencies = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.12" },
-    { name = "scdl", directory = "vendor/scdl" },
+    { name = "scdl", directory = "scdl" },
 ]
 
 [[package]]
