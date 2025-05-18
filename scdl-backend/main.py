@@ -4,15 +4,14 @@ from scdl.scdl import SoundCloud, SCDLArgs, download_url
 from fastapi.responses import StreamingResponse, JSONResponse
 import mimetypes
 import io
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 # Add CORS middleware to allow requests from http://localhost:3000 and https://soundcloudy.nkaewam.dev
 app.add_middleware(
     CORSMiddleware,
-    # allow_origins=["http://localhost:3000", "https://soundcloudy.nkaewam.dev"],
-    allow_origins=["*"],
+    allow_origins=["http://localhost:3000", "https://soundcloudy.nkaewam.dev"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
