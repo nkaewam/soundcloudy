@@ -548,7 +548,7 @@ def truncate_str(s: str, length: int) -> str:
 def sanitize_str(
     filename: str,
     ext: str = "",
-    replacement_char: str = "�",
+    replacement_char: str = "_",
     max_length: int = 255,
 ) -> str:
     """Sanitizes a string for use as a filename. Does not allow the file to be hidden"""

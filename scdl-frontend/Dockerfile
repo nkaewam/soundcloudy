@@ -1,5 +1,6 @@
 # ---- Builder ----
 FROM oven/bun:1.2.5 AS builder
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 WORKDIR /app
 COPY . .
 RUN bun install --frozen-lockfile
