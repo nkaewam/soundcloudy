@@ -8,10 +8,11 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Add CORS middleware to allow requests from http://localhost:3000
+# Add CORS middleware to allow requests from http://localhost:3000 and https://soundcloudy.nkaewam.dev
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://soundcloudy.nkaeawm.dev"],
+    # allow_origins=["http://localhost:3000", "https://soundcloudy.nkaewam.dev"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
