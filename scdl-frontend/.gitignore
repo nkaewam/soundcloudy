@@ -1,3 +1,9 @@
+### macOS ###
+# General
+.DS_Store
+.AppleDouble
+.LSOverride
+
 # dependencies (bun install)
 node_modules
 
