@@ -1,6 +1,7 @@
 # ---- Builder ----
 FROM oven/bun:1.2.5 AS builder
 ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=${VITE_BACKEND_URL}
 
 # Check if the backend URL is set, echo it
 RUN echo "VITE_BACKEND_URL: $VITE_BACKEND_URL"
