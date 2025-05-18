@@ -10,6 +10,9 @@ dist
 coverage
 *.lcov
 
+.output
+.vinxi
+
 # logs
 logs
 _.log
